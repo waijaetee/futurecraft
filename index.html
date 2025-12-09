@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Futurecraft - Strategic Transformation from Diagnosis Through Implementation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Futurecraft provides strategic transformation services from diagnosis through implementation. Contact us at hello@ftrcrft.com" />
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Futurecraft - Strategic Transformation" />
+  <meta property="og:description" content="Strategic transformation from diagnosis through implementation." />
+  <meta property="og:url" content="https://ftrcrft.com" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Futurecraft - Strategic Transformation" />
+  <meta name="twitter:description" content="Strategic transformation from diagnosis through implementation." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: #479FF8; /* solid brand blue */
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* Info block under the logo */
+    #infoBlock {
+      position: absolute;
+      z-index: 10;
+      background-color: #479FF8;
+      color: #ffffff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      line-height: 1.5;
+      pointer-events: auto; /* allow clicking the email link */
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px; /* single size for all lines */
+    }
+    #infoBlock h1 {
+      margin: 0 0 4px 0;
+      font-size: inherit;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    #infoBlock p {
+      margin: 0 0 6px 0;
+      font-size: inherit;
+    }
+    #infoBlock p:last-child {
+      margin-bottom: 0;
+    }
+    #infoBlock a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    #infoBlock a:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="ascii" role="img" aria-label="Futurecraft animated ASCII logo background"></canvas>
+
+  <div id="infoBlock" role="region" aria-label="Company information">
+    <h1>FUTURECRAFT</h1>
+    <p>Strategic transformation from diagnosis through implementation.</p>
+    <p>Get in Touch: <a href="mailto:hello@ftrcrft.com">hello@ftrcrft.com</a></p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('ascii');
+    const ctx = canvas.getContext('2d');
+    const infoBlock = document.getElementById('infoBlock');
+
+    // --- Futurecraft ASCII word mark ---
+    const logoText = `           _____                    _____                _____                    _____                    _____                    _____
+          /\\    \\                  /\\    \\              /\\    \\                  /\\    \\                  /\\    \\                  /\\    \\
+         /::\\    \\                /::\\____\\            /::\\    \\                /::\\____\\                /::\\    \\                /::\\    \\
+        /::::\\    \\              /:::/    /            \\:::\\    \\              /:::/    /               /::::\\    \\              /::::\\    \\
+       /::::::\\    \\            /:::/    /              \\:::\\    \\            /:::/    /               /::::::\\    \\            /::::::\\    \\
+      /:::/\\:::\\    \\          /:::/    /                \\:::\\    \\          /:::/    /               /:::/\\:::\\    \\          /:::/\\:::\\    \\
+     /:::/__\\:::\\    \\        /:::/    /                  \\:::\\    \\        /:::/    /               /:::/__\\:::\\    \\        /:::/__\\:::\\    \\
+    /::::\\   \\:::\\    \\      /:::/    /                   /::::\\    \\      /:::/    /               /::::\\   \\:::\\    \\      /::::\\   \\:::\\    \\
+   /::::::\\   \\:::\\    \\    /:::/    /      _____        /::::::\\    \\    /:::/    /      _____    /::::::\\   \\:::\\    \\    /::::::\\   \\:::\\    \\
+  /:::/\\:::\\   \\:::\\    \\  /:::/____/      /\\    \\      /:::/\\:::\\    \\  /:::/____/      /\\    \\  /:::/\\:::\\   \\:::\\____\\  /:::/\\:::\\   \\:::\\    \\
+ /:::/  \\:::\\   \\:::\\____\\|:::|    /      /::\\____\\    /:::/  \\:::\\____\\|:::|    /      /::\\____\\/:::/  \\:::\\   \\:::|    |/:::/__\\:::\\   \\:::\\____\\
+ \\::/    \\:::\\   \\::/    /|:::|____\\     /:::/    /   /:::/    \\::/    /|:::|____\\     /:::/    /\\::/   |::::\\  /:::|____|\\:::\\   \\:::\\   \\::/    /
+  \\/____/ \\:::\\   \\/____/  \\:::\\    \\   /:::/    /   /:::/    / \\/____/  \\:::\\    \\   /:::/    /  \\/____|:::::\\/:::/    /  \\:::\\   \\:::\\   \\/____/
+           \\:::\\    \\       \\:::\\    \\ /:::/    /   /:::/    /            \\:::\\    \\ /:::/    /         |:::::::::/    /    \\:::\\   \\:::\\    \\
+            \\:::\\____\\       \\:::\\    /:::/    /   /:::/    /              \\:::\\    /:::/    /          |::|\\::::/    /      \\:::\\   \\:::\\____\\
+             \\::/    /        \\:::\\__/:::/    /    \\::/    /                \\:::\\__/:::/    /           |::| \\::/____/        \\:::\\   \\::/    /
+              \\/____/          \\::::::::/    /      \\/____/                  \\::::::::/    /            |::|  ~|               \\:::\\   \\/____/
+                                \\::::::/    /                                 \\::::::/    /             |::|   |                \\:::\\    \\
+                                 \\::::/    /                                   \\::::/    /              \\::|   |                 \\:::\\____\\
+                                  \\::/____/                                     \\::/____/                \\:|   |                  \\::/    /
+                                                                                                          \\|___|                   \\/____/
+           _____                    _____                    _____                    _____                _____
+          /\\    \\                  /\\    \\                  /\\    \\                  /\\    \\              /\\    \\
+         /::\\    \\                /::\\    \\                /::\\    \\                /::\\    \\            /::\\    \\
+        /::::\\    \\              /::::\\    \\              /::::\\    \\              /::::\\    \\           \\:::\\    \\
+       /::::::\\    \\            /::::::\\    \\            /::::::\\    \\            /::::::\\    \\           \\:::\\    \\
+      /:::/\\:::\\    \\          /:::/\\:::\\    \\          /:::/\\:::\\    \\          /:::/\\:::\\    \\           \\:::\\    \\
+     /:::/  \\:::\\    \\        /:::/__\\:::\\    \\        /:::/__\\:::\\    \\        /:::/__\\:::\\    \\           \\:::\\    \\
+    /:::/    \\:::\\    \\      /::::\\   \\:::\\    \\      /::::\\   \\:::\\    \\      /::::\\   \\:::\\    \\          /::::\\    \\
+   /:::/    / \\:::\\    \\    /::::::\\   \\:::\\    \\    /::::::\\   \\:::\\    \\    /::::::\\   \\:::\\    \\        /::::::\\    \\
+  /:::/    /   \\:::\\    \\  /:::/\\:::\\   \\:::\\____\\  /:::/\\:::\\   \\:::\\    \\  /:::/\\:::\\   \\:::\\    \\      /:::/\\:::\\    \\
+ /:::/____/     \\:::\\____\\/:::/  \\:::\\   \\:::|    |/:::/  \\:::\\   \\:::\\____\\/:::/  \\:::\\   \\:::\\____\\    /:::/  \\:::\\____\\
+ \\:::\\    \\      \\::/    /\\::/   |::::\\  /:::|____|\\::/    \\:::\\  /:::/    /\\::/    \\:::\\   \\::/    /   /:::/    \\::/    /
+  \\:::\\    \\      \\/____/  \\/____|:::::\\/:::/    /  \\/____/ \\:::\\/:::/    /  \\/____/ \\:::\\   \\/____/   /:::/    / \\/____/
+   \\:::\\    \\                    |:::::::::/    /            \\::::::/    /            \\:::\\    \\      /:::/    /
+    \\:::\\    \\                   |::|\\::::/    /              \\::::/    /              \\:::\\____\\    /:::/    /
+     \\:::\\    \\                  |::| \\::/____/               /:::/    /                \\::/    /    \\::/    /
+      \\:::\\    \\                 |::|   |                    /:::/    /                  \\/____/      \\/____/
+       \\:::\\    \\                |::|   |                   /:::/    /
+        \\:::\\____\\               \\::|   |                  /:::/    /
+         \\::/    /                \\:|   |                  \\::/    /
+          \\/____/                  \\|___|                   \\/____/
+`;
+
+    // Process logo: trim only top/bottom completely blank lines
+    const rawLines = logoText.split('\n');
+    let first = 0;
+    while (first < rawLines.length && rawLines[first].trim().length === 0) first++;
+    let last = rawLines.length - 1;
+    while (last >= 0 && rawLines[last].trim().length === 0) last--;
+    const logoLines = rawLines.slice(first, last + 1);
+
+    // Visible width: last non-space index per line
+    let logoWidth = 0;
+    for (const line of logoLines) {
+      let lastNonSpace = -1;
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] !== ' ') lastNonSpace = i;
+      }
+      const visibleWidth = lastNonSpace + 1;
+      if (visibleWidth > logoWidth) logoWidth = visibleWidth;
+    }
+    const logoHeight = logoLines.length;
+
+    const charset = " .:-=+*#%@";
+    let cols, rows, cellSize;
+    let logoColStart = 0;
+    let logoRowStart = 0;
+
+    function recalcLayout() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const maxCellByWidthPx = w / (logoWidth + 4);
+      const maxCellByHeightPx = h / (logoHeight + 8);
+      const maxCellPx = Math.min(maxCellByWidthPx, maxCellByHeightPx);
+
+      const minCell = 3;
+      const maxCell = 22;
+      const baseCell = Math.min(maxCell, Math.max(minCell, Math.floor(maxCellPx)));
+      cellSize = baseCell;
+
+      cols = Math.floor(w / cellSize);
+      rows = Math.floor(h / cellSize);
+
+      // Move logo slightly further up (was ~0.18)
+      const desiredTop = Math.floor(rows * 0.14);
+      const maxTop = Math.max(0, rows - logoHeight - 2);
+      logoRowStart = Math.min(desiredTop, maxTop);
+
+      // Horizontally centered
+      logoColStart = Math.max(0, Math.floor((cols - logoWidth) / 2));
+
+      ctx.textBaseline = "top";
+
+      // Position info block with extra space below logo
+      if (infoBlock) {
+        const blockLeft = logoColStart * cellSize;
+        const blockTop = (logoRowStart + logoHeight + 3.4) * cellSize;
+        infoBlock.style.left = blockLeft + "px";
+        infoBlock.style.top = blockTop + "px";
+
+        const maxWidth = Math.min(420, w - blockLeft - 20);
+        infoBlock.style.maxWidth = Math.max(260, maxWidth) + "px";
+      }
+    }
+
+    window.addEventListener('resize', recalcLayout);
+    recalcLayout();
+
+    // Deterministic hash to vary the signal per cell
+    function hash2(x, y) {
+      const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+      return s - Math.floor(s);
+    }
+
+    function drawFrame(tSeconds) {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+
+      ctx.fillStyle = "#479FF8";
+      ctx.fillRect(0, 0, w, h);
+
+      for (let gy = 0; gy < rows; gy++) {
+        for (let gx = 0; gx < cols; gx++) {
+
+          const inLogoBounds =
+            gx >= logoColStart &&
+            gx < logoColStart + logoWidth &&
+            gy >= logoRowStart &&
+            gy < logoRowStart + logoHeight;
+
+          let isLogoChar = false;
+          let ch = " ";
+
+          if (inLogoBounds) {
+            const lx = gx - logoColStart;
+            const ly = gy - logoRowStart;
+            const line = logoLines[ly] || "";
+            ch = line[lx] || " ";
+            if (ch !== " ") isLogoChar = true;
+          }
+
+          const px = gx * cellSize;
+          const py = gy * cellSize;
+
+          if (isLogoChar) {
+            // LOGO (bold)
+            ctx.font =
+              "bold " +
+              (cellSize * 0.9) +
+              "px SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+
+            const pulse = 0.4 + 0.3 * Math.sin(tSeconds * 2 + gx * 0.25 + gy * 0.3);
+            const alpha = 0.85 + 0.15 * pulse;
+            ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+            ctx.fillText(ch, px, py);
+
+          } else {
+            // BACKGROUND (regular-weight)
+            const localScale = 0.6 + hash2(gx, gy) * 1.4;
+            const timeScale = 0.7 + hash2(gx * 7, gy * 13);
+            const freqX = 0.22 * localScale;
+            const freqY = 0.29 * localScale;
+
+            let v = Math.sin(gx * freqX + gy * freqY + tSeconds * 1.3 * timeScale)
+                    * Math.cos((gx * freqX + gy * freqY) * 0.7 * localScale);
+            v = (v + 1) / 2;
+
+            if (v < 0.18) continue;
+
+            const idx = Math.min(charset.length - 1, Math.floor(v * charset.length));
+            ch = charset[idx];
+
+            ctx.font =
+              (cellSize * 0.9) +
+              "px SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+
+            const alpha = 0.05 + v * 0.25;
+            ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+            ctx.fillText(ch, px, py);
+          }
+        }
+      }
+    }
+
+    let startTime = null;
+    function loop(ts) {
+      if (!startTime) startTime = ts;
+      drawFrame((ts - startTime) / 1000);
+      requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
