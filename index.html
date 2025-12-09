@@ -264,7 +264,7 @@
         infoBlock.style.left = blockLeft + "px";
         infoBlock.style.top = blockTop + "px";
 
-        const maxWidth = Math.min(720, w - blockLeft - 20);   // widened from 420 to 720
+        const maxWidth = Math.min(720, w - blockLeft - 20);
         infoBlock.style.maxWidth = Math.max(260, maxWidth) + "px";
       }
     }
@@ -327,6 +327,13 @@
             ctx.fillText(ch, px, py);
 
           } else {
+            // NEW: keep logo interior holes solid blue (no background chars)
+            if (inLogoBounds) {
+              // Inside the logo's bounding box, but this cell is a space:
+              // leave it as pure background (no ASCII background).
+              continue;
+            }
+
             // BACKGROUND: multi-scale liquid flow with regional variation + mouse steering
             const regionX = Math.floor(gx / 8);
             const regionY = Math.floor(gy / 4);
