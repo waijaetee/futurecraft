@@ -211,6 +211,72 @@
     }
     const logoHeight = logoLines.length;
 
+    // Build full logo grid (padded to logoWidth) for interior detection
+    const logoGrid = [];
+    for (let y = 0; y < logoHeight; y++) {
+      const line = logoLines[y] || "";
+      const row = [];
+      for (let x = 0; x < logoWidth; x++) {
+        row.push(line[x] || " ");
+      }
+      logoGrid.push(row);
+    }
+
+    // Flood-fill from edges to find "outside" spaces.
+    const visited = Array.from({ length: logoHeight }, () =>
+      new Array(logoWidth).fill(false)
+    );
+    const interiorMask = Array.from({ length: logoHeight }, () =>
+      new Array(logoWidth).fill(false)
+    );
+
+    function enqueueIfSpace(x, y, queue) {
+      if (
+        x < 0 ||
+        x >= logoWidth ||
+        y < 0 ||
+        y >= logoHeight ||
+        visited[y][x] ||
+        logoGrid[y][x] !== " "
+      ) {
+        return;
+      }
+      visited[y][x] = true;
+      queue.push({ x, y });
+    }
+
+    (function computeInteriorMask() {
+      const queue = [];
+
+      // Enqueue boundary spaces (top/bottom rows, left/right columns)
+      for (let x = 0; x < logoWidth; x++) {
+        enqueueIfSpace(x, 0, queue);
+        enqueueIfSpace(x, logoHeight - 1, queue);
+      }
+      for (let y = 0; y < logoHeight; y++) {
+        enqueueIfSpace(0, y, queue);
+        enqueueIfSpace(logoWidth - 1, y, queue);
+      }
+
+      // BFS to mark all spaces connected to the boundary as "outside"
+      while (queue.length > 0) {
+        const { x, y } = queue.shift();
+        enqueueIfSpace(x + 1, y, queue);
+        enqueueIfSpace(x - 1, y, queue);
+        enqueueIfSpace(x, y + 1, queue);
+        enqueueIfSpace(x, y - 1, queue);
+      }
+
+      // Any remaining space that's not visited is an interior hole
+      for (let y = 0; y < logoHeight; y++) {
+        for (let x = 0; x < logoWidth; x++) {
+          if (logoGrid[y][x] === " " && !visited[y][x]) {
+            interiorMask[y][x] = true;
+          }
+        }
+      }
+    })();
+
     const charset = " .:-=+*#%@";
     let cols, rows, cellSize;
     let logoColStart = 0;
@@ -257,15 +323,30 @@
 
       ctx.textBaseline = "top";
 
-      // Position info block slightly further down
       if (infoBlock) {
-        const blockLeft = logoColStart * cellSize;
-        const blockTop = (logoRowStart + logoHeight + 4.8) * cellSize;
-        infoBlock.style.left = blockLeft + "px";
-        infoBlock.style.top = blockTop + "px";
+        if (w < 640) {
+          // Mobile layout: more vertical spacing, symmetric side padding
+          const sideMargin = 24;
+          const gapRows = 12; // larger gap from logo on small screens
+          const blockLeft = sideMargin;
+          const blockTop = (logoRowStart + logoHeight + gapRows) * cellSize;
 
-        const maxWidth = Math.min(720, w - blockLeft - 20);   // widened from 420 to 720
-        infoBlock.style.maxWidth = Math.max(260, maxWidth) + "px";
+          infoBlock.style.left = blockLeft + "px";
+          infoBlock.style.top = blockTop + "px";
+
+          const maxWidth = w - sideMargin * 2;
+          infoBlock.style.maxWidth = Math.max(240, maxWidth) + "px";
+        } else {
+          // Desktop / tablet: align with logo left edge, previous behavior
+          const blockLeft = logoColStart * cellSize;
+          const blockTop = (logoRowStart + logoHeight + 4.8) * cellSize;
+
+          infoBlock.style.left = blockLeft + "px";
+          infoBlock.style.top = blockTop + "px";
+
+          const maxWidth = Math.min(720, w - blockLeft - 20);
+          infoBlock.style.maxWidth = Math.max(260, maxWidth) + "px";
+        }
       }
     }
 
@@ -296,9 +377,12 @@
           let isLogoChar = false;
           let ch = " ";
 
+          let lx = -1;
+          let ly = -1;
+
           if (inLogoBounds) {
-            const lx = gx - logoColStart;
-            const ly = gy - logoRowStart;
+            lx = gx - logoColStart;
+            ly = gy - logoRowStart;
             const line = logoLines[ly] || "";
             ch = line[lx] || " ";
             if (ch !== " ") isLogoChar = true;
@@ -327,6 +411,17 @@
             ctx.fillText(ch, px, py);
 
           } else {
+            // If we're inside the logo bounding box and this is an interior space,
+            // leave it as pure blue (no ASCII background).
+            if (
+              inLogoBounds &&
+              ly >= 0 && ly < logoHeight &&
+              lx >= 0 && lx < logoWidth &&
+              interiorMask[ly][lx]
+            ) {
+              continue;
+            }
+
             // BACKGROUND: multi-scale liquid flow with regional variation + mouse steering
             const regionX = Math.floor(gx / 8);
             const regionY = Math.floor(gy / 4);
