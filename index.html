@@ -119,7 +119,7 @@
     <p>Get in touch → <a href="mailto:hello@ftrcrft.com">hello@ftrcrft.com</a></p>
   </div>
 
-  <!-- ASCII logo source -->
+  <!-- ASCII logo source: restored known-good block -->
   <pre id="logoAscii">
           _____                    _____                _____                    _____                    _____                    _____          
          /\    \                  /\    \              /\    \                  /\    \                  /\    \                  /\    \         
@@ -155,11 +155,11 @@
  /:::/    /   \:::\    \  /:::/\:::\   \:::\____\  /:::/\:::\   \:::\    \  /:::/\:::\   \:::\    \      /:::/\:::\    \                          
 /:::/____/     \:::\____\/:::/  \:::\   \:::|    |/:::/  \:::\   \:::\____\/:::/  \:::\   \:::\____\    /:::/  \:::\____\                         
 \:::\    \      \::/    /\::/   |::::\  /:::|____|\::/    \:::\  /:::/    /\::/    \:::\   \::/    /   /:::/    \::/    /                         
- \:::\    \      \/____/  \/____|:::::\/:::/    /  \/____/ \:::\/:::/    /  \/____/ \:::\   \\/____/   /:::/    / \\/____/                          
+ \:::\    \      \/____/  \/____|:::::\/:::/    /  \/____/ \:::\/:::/    /  \/____/ \:::\   \/____/   /:::/    / \/____/                          
   \:::\    \                    |:::::::::/    /            \::::::/    /            \:::\    \      /:::/    /                                   
    \:::\    \                   |::|\::::/    /              \::::/    /              \:::\____\    /:::/    /                                    
     \:::\    \                  |::| \::/____/               /:::/    /                \::/    /    \::/    /                                     
-     \:::\    \                 |::|  ~|                    /:::/    /                  \/____/      \/____/                                      
+     \:::\    \                 |::|   |                    /:::/    /                  \/____/      \/____/                                      
       \:::\    \                |::|   |                   /:::/    /                                                                             
        \:::\____\               \::|   |                  /:::/    /                                                                              
         \::/    /                \:|   |                  \::/    /                                                                               
@@ -343,8 +343,8 @@
           const logoBottomPx = (logoRowStart + logoHeight) * cellSize;
           let blockTop = (logoRowStart + logoHeight + gapRows) * cellSize;
 
-          // Ensure at least ~65px gap below logo
-          const minPixelGap = 65;
+          // Ensure at least ~150px gap below logo
+          const minPixelGap = 150;
           if (blockTop - logoBottomPx < minPixelGap) {
             blockTop = logoBottomPx + minPixelGap;
           }
