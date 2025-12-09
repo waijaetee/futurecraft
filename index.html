@@ -343,8 +343,8 @@
           const logoBottomPx = (logoRowStart + logoHeight) * cellSize;
           let blockTop = (logoRowStart + logoHeight + gapRows) * cellSize;
 
-          // Ensure at least ~150px gap below logo
-          const minPixelGap = 150;
+          // Ensure at least ~65px gap below logo
+          const minPixelGap = 65;
           if (blockTop - logoBottomPx < minPixelGap) {
             blockTop = logoBottomPx + minPixelGap;
           }
