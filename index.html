@@ -18,7 +18,11 @@
   <meta name="twitter:description" content="Strategic transformation from diagnosis through implementation." />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>" />
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>"
+  />
   <style>
     * {
       box-sizing: border-box;
@@ -58,7 +62,7 @@
       font-size: 14px; /* single size for all lines */
     }
     #infoBlock h1 {
-      margin: 0 0 4px 0;
+      margin: 0 0 10px 0;          /* more space under FUTURECRAFT */
       font-size: inherit;
       font-weight: 600;
       letter-spacing: 0.18em;
@@ -185,8 +189,8 @@
       cols = Math.floor(w / cellSize);
       rows = Math.floor(h / cellSize);
 
-      // Move logo slightly further up (was ~0.18)
-      const desiredTop = Math.floor(rows * 0.14);
+      // Move logo further up the page (was ~0.14)
+      const desiredTop = Math.floor(rows * 0.08);
       const maxTop = Math.max(0, rows - logoHeight - 2);
       logoRowStart = Math.min(desiredTop, maxTop);
 
@@ -210,7 +214,7 @@
     window.addEventListener('resize', recalcLayout);
     recalcLayout();
 
-    // Deterministic hash to vary the signal per cell
+    // Deterministic hash
     function hash2(x, y) {
       const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
       return s - Math.floor(s);
@@ -226,7 +230,6 @@
 
       for (let gy = 0; gy < rows; gy++) {
         for (let gx = 0; gx < cols; gx++) {
-
           const inLogoBounds =
             gx >= logoColStart &&
             gx < logoColStart + logoWidth &&
@@ -260,17 +263,33 @@
             ctx.fillText(ch, px, py);
 
           } else {
-            // BACKGROUND (regular-weight)
+            // BACKGROUND (regular-weight) with larger-scale clustering / banding
             const localScale = 0.6 + hash2(gx, gy) * 1.4;
-            const timeScale = 0.7 + hash2(gx * 7, gy * 13);
+            const timeScale  = 0.7 + hash2(gx * 7, gy * 13);
             const freqX = 0.22 * localScale;
             const freqY = 0.29 * localScale;
 
-            let v = Math.sin(gx * freqX + gy * freqY + tSeconds * 1.3 * timeScale)
-                    * Math.cos((gx * freqX + gy * freqY) * 0.7 * localScale);
-            v = (v + 1) / 2;
+            // Fine-grain signal
+            const phase = gx * freqX + gy * freqY + tSeconds * 1.3 * timeScale;
+            let fine = Math.sin(phase) * Math.cos(phase * 0.7 * localScale);
+            fine = (fine + 1) / 2; // 0..1
 
-            if (v < 0.18) continue;
+            // Coarse "macro" pattern: group cells into clusters (3x2) and animate bands
+            const clusterX = Math.floor(gx / 3);
+            const clusterY = Math.floor(gy / 2);
+            const bandBase =
+              Math.sin(clusterX * 0.55 + tSeconds * 0.9) *
+              Math.cos(clusterY * 0.42 + tSeconds * 0.7);
+            let band = (bandBase + 1) / 2; // 0..1
+
+            // Blend fine + band for visible waves
+            let v = 0.55 * band + 0.45 * fine;
+
+            // Slight cluster-specific threshold variation
+            const clusterNoise = hash2(clusterX * 3.1, clusterY * 5.7); // 0..1
+            const threshold = 0.14 + clusterNoise * 0.12;
+
+            if (v < threshold) continue;
 
             const idx = Math.min(charset.length - 1, Math.floor(v * charset.length));
             ch = charset[idx];
