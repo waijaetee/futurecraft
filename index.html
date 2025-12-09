@@ -23,6 +23,12 @@
     type="image/svg+xml"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>"
   />
+
+  <!-- Webfont for text block -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     * {
       box-sizing: border-box;
@@ -54,23 +60,26 @@
       z-index: 10;
       background-color: #479FF8;
       color: #ffffff;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border-radius: 8px;
-      line-height: 1.5;
+      line-height: 1.6;
       pointer-events: auto; /* allow clicking the email link */
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 14px; /* single size for all lines */
     }
     #infoBlock h1 {
-      margin: 0 0 10px 0;          /* more space under FUTURECRAFT */
+      margin: 0 0 10px 0;          /* more breathing room */
+      padding-bottom: 6px;
       font-size: inherit;
       font-weight: 600;
       letter-spacing: 0.18em;
       text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35); /* visible line under FUTURECRAFT */
     }
     #infoBlock p {
       margin: 0 0 6px 0;
       font-size: inherit;
+      font-weight: 400;
     }
     #infoBlock p:last-child {
       margin-bottom: 0;
@@ -189,8 +198,8 @@
       cols = Math.floor(w / cellSize);
       rows = Math.floor(h / cellSize);
 
-      // Move logo further up the page (was ~0.14)
-      const desiredTop = Math.floor(rows * 0.08);
+      // Move logo further up the page
+      const desiredTop = Math.floor(rows * 0.06);  // was 0.08, more top now
       const maxTop = Math.max(0, rows - logoHeight - 2);
       logoRowStart = Math.min(desiredTop, maxTop);
 
@@ -199,10 +208,10 @@
 
       ctx.textBaseline = "top";
 
-      // Position info block with extra space below logo
+      // Position info block slightly further down
       if (infoBlock) {
         const blockLeft = logoColStart * cellSize;
-        const blockTop = (logoRowStart + logoHeight + 3.4) * cellSize;
+        const blockTop = (logoRowStart + logoHeight + 4.4) * cellSize; // was 3.4
         infoBlock.style.left = blockLeft + "px";
         infoBlock.style.top = blockTop + "px";
 
@@ -213,12 +222,6 @@
 
     window.addEventListener('resize', recalcLayout);
     recalcLayout();
-
-    // Deterministic hash
-    function hash2(x, y) {
-      const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-      return s - Math.floor(s);
-    }
 
     function drawFrame(tSeconds) {
       const dpr = window.devicePixelRatio || 1;
@@ -251,44 +254,38 @@
           const py = gy * cellSize;
 
           if (isLogoChar) {
-            // LOGO (bold)
+            // LOGO (extra-bold feel: bigger font, stronger alpha)
             ctx.font =
               "bold " +
-              (cellSize * 0.9) +
+              (cellSize * 1.02) +  // slightly larger
               "px SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
 
-            const pulse = 0.4 + 0.3 * Math.sin(tSeconds * 2 + gx * 0.25 + gy * 0.3);
-            const alpha = 0.85 + 0.15 * pulse;
+            const pulse = 0.5 + 0.5 * Math.sin(tSeconds * 1.6 + gx * 0.23 + gy * 0.27);
+            const alpha = 0.9 + 0.1 * pulse;  // 0.9 → 1.0
             ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
             ctx.fillText(ch, px, py);
 
           } else {
-            // BACKGROUND (regular-weight) with larger-scale clustering / banding
-            const localScale = 0.6 + hash2(gx, gy) * 1.4;
-            const timeScale  = 0.7 + hash2(gx * 7, gy * 13);
-            const freqX = 0.22 * localScale;
-            const freqY = 0.29 * localScale;
+            // BACKGROUND (regular-weight) with liquid-like flow
 
-            // Fine-grain signal
-            const phase = gx * freqX + gy * freqY + tSeconds * 1.3 * timeScale;
-            let fine = Math.sin(phase) * Math.cos(phase * 0.7 * localScale);
-            fine = (fine + 1) / 2; // 0..1
+            // Low-frequency "liquid" motion using multiple blended waves
+            const scale = 0.08;
+            const t1 = tSeconds * 0.35;
+            const t2 = tSeconds * 0.22;
+            const t3 = tSeconds * 0.18;
 
-            // Coarse "macro" pattern: group cells into clusters (3x2) and animate bands
-            const clusterX = Math.floor(gx / 3);
-            const clusterY = Math.floor(gy / 2);
-            const bandBase =
-              Math.sin(clusterX * 0.55 + tSeconds * 0.9) *
-              Math.cos(clusterY * 0.42 + tSeconds * 0.7);
-            let band = (bandBase + 1) / 2; // 0..1
+            const nx = gx * scale;
+            const ny = gy * scale;
 
-            // Blend fine + band for visible waves
-            let v = 0.55 * band + 0.45 * fine;
+            let v =
+              0.45 * Math.sin(nx + t1) +
+              0.35 * Math.sin(ny * 0.9 - t2) +
+              0.25 * Math.sin((nx * 0.7 + ny * 0.5) + t3);
 
-            // Slight cluster-specific threshold variation
-            const clusterNoise = hash2(clusterX * 3.1, clusterY * 5.7); // 0..1
-            const threshold = 0.14 + clusterNoise * 0.12;
+            v = (v + 1.0) / 2.0; // normalize approx to 0..1
 
+            // Thresholding to reveal flowing bands, not too structured
+            const threshold = 0.25;
             if (v < threshold) continue;
 
             const idx = Math.min(charset.length - 1, Math.floor(v * charset.length));
@@ -298,7 +295,8 @@
               (cellSize * 0.9) +
               "px SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
 
-            const alpha = 0.05 + v * 0.25;
+            // Slightly stronger but still subordinate to logo
+            const alpha = 0.04 + v * 0.22; // more visible than before
             ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
             ctx.fillText(ch, px, py);
           }
