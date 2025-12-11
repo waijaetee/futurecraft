@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Futurecraft</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <!-- Meta descriptions -->
   <meta
@@ -19,6 +19,15 @@
     content="Strategic transformation from diagnosis through implementation."
   />
   <meta property="og:url" content="https://ftrcrft.com" />
+  <meta property="og:image" content="https://ftrcrft.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://ftrcrft.com" />
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#479FF8" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -34,11 +43,15 @@
     type="image/svg+xml"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>"
   />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>" />
 
   <!-- Webfont for text block -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Preload critical font -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" as="style">
 
   <style>
     * {
@@ -51,6 +64,8 @@
       background-color: #479FF8; /* solid brand blue */
       overflow-x: hidden;
       overflow-y: auto;
+      /* Prevent horizontal scroll on mobile */
+      max-width: 100vw;
     }
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -63,6 +78,10 @@
       top: 0;
       left: 0;
       z-index: 0;
+      /* Optimize canvas rendering */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      will-change: contents;
     }
 
     /* Info block under the logo */
@@ -77,6 +96,10 @@
       pointer-events: auto; /* allow clicking the email link */
       font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 14px; /* single size for all lines */
+      /* Improve text rendering */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
     }
     #infoBlock h1 {
       margin: 0 0 18px 0;   /* generous spacing below heading */
@@ -97,9 +120,20 @@
     #infoBlock a {
       color: #ffffff;
       text-decoration: underline;
+      transition: opacity 0.2s ease;
+      /* Ensure touch target is at least 44x44px */
+      min-height: 44px;
+      display: inline-block;
+      padding: 4px 0;
     }
-    #infoBlock a:hover {
+    #infoBlock a:hover,
+    #infoBlock a:focus {
       opacity: 0.8;
+      outline: 2px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+    #infoBlock a:active {
+      opacity: 0.6;
     }
 
     /* Hidden source for ASCII logo */
@@ -167,9 +201,15 @@
   </pre>
 
   <script>
-    const canvas = document.getElementById('ascii');
-    const ctx = canvas.getContext('2d');
+    // Error handling wrapper
     const infoBlock = document.getElementById('infoBlock');
+    
+    try {
+    const canvas = document.getElementById('ascii');
+    if (!canvas) throw new Error('Canvas element not found');
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not available');
 
     // Respect reduced motion preferences
     const prefersReducedMotion =
@@ -292,6 +332,11 @@
     let cols, rows, cellSize;
     let logoColStart = 0;
     let logoRowStart = 0;
+    
+    // Cache font strings for performance
+    let cachedLogoFont = '';
+    let cachedBgFont = '';
+    const monospaceFont = "SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
 
     function recalcLayout() {
       const dpr = window.devicePixelRatio || 1;
@@ -333,6 +378,10 @@
       logoColStart = Math.max(0, Math.floor((cols - logoWidth) / 2));
 
       ctx.textBaseline = "top";
+      
+      // Update cached font strings
+      cachedLogoFont = `bold ${cellSize * 1.05}px ${monospaceFont}`;
+      cachedBgFont = `${cellSize * 0.9}px ${monospaceFont}`;
 
       if (infoBlock) {
         if (w < 640) {
@@ -369,7 +418,7 @@
       }
     }
 
-    window.addEventListener('resize', recalcLayout);
+    // Initial layout calculation
     recalcLayout();
 
     function hash2(x, y) {
@@ -412,15 +461,11 @@
 
           if (isLogoChar) {
             // LOGO: double-stroke for extra boldness
-            const fontSize = cellSize * 1.05;
-            const fontFamily =
-              "SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-
             const phase = tSeconds * 1.4 + gx * 0.22 + gy * 0.26;
             const pulse = 0.5 + 0.5 * Math.sin(phase);
 
             // Soft outer glow / shadow
-            ctx.font = `bold ${fontSize}px ${fontFamily}`;
+            ctx.font = cachedLogoFont;
             ctx.fillStyle = `rgba(255,255,255,${(0.40 + 0.15 * pulse).toFixed(3)})`;
             ctx.fillText(ch, px + 0.6, py + 0.6);
 
@@ -474,10 +519,7 @@
             const idx = Math.min(charset.length - 1, Math.floor(v * charset.length));
             ch = charset[idx];
 
-            ctx.font =
-              (cellSize * 0.9) +
-              "px SF Mono, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
-
+            ctx.font = cachedBgFont;
             const alpha = 0.08 + v * 0.32;
             ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
             ctx.fillText(ch, px, py);
@@ -487,16 +529,46 @@
     }
 
     let startTime = null;
+    let lastFrameTime = 0;
+    const targetFPS = 60;
+    const frameInterval = 1000 / targetFPS;
+    
     function loop(ts) {
       if (!startTime) startTime = ts;
-      const t = prefersReducedMotion ? 0 : (ts - startTime) / 1000;
-      drawFrame(t);
+      
+      // Throttle to target FPS for better performance on lower-end devices
+      const elapsed = ts - lastFrameTime;
+      if (elapsed >= frameInterval) {
+        const t = prefersReducedMotion ? 0 : (ts - startTime) / 1000;
+        drawFrame(t);
+        lastFrameTime = ts - (elapsed % frameInterval);
+      }
+      
       if (!prefersReducedMotion) {
         requestAnimationFrame(loop);
       }
     }
 
     requestAnimationFrame(loop);
+    
+    // Handle resize with debouncing for better performance
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        recalcLayout();
+      }, 150);
+    });
+    
+    } catch (error) {
+      console.error('Error initializing canvas animation:', error);
+      // Fallback: show static content if canvas fails
+      if (infoBlock) {
+        infoBlock.style.position = 'relative';
+        infoBlock.style.margin = '2rem auto';
+        infoBlock.style.maxWidth = '600px';
+      }
+    }
   </script>
 </body>
 </html>
